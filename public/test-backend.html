@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Backend Connectivity Test</h1>
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="testThemeRequest()">Test Theme Request</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+    
+    <div id="logs"></div>
+
+    <script>
+        const BACKEND_URL = 'https://us-central1-kovuapp-fda51.cloudfunctions.net';
+        const FUNCTION_URL = `${BACKEND_URL}/generate_theme`;
+        
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            logsDiv.appendChild(logDiv);
+            console.log(message);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        async function testConnection() {
+            log('🔍 Starting connection test...');
+            log(`Backend URL: ${BACKEND_URL}`);
+            log(`Function URL: ${FUNCTION_URL}`);
+            
+            // Test 1: Basic connectivity
+            try {
+                log('🌐 Testing basic connectivity...');
+                const response = await fetch(BACKEND_URL, { mode: 'no-cors' });
+                log('✅ Basic connectivity successful', 'success');
+            } catch (error) {
+                log(`❌ Basic connectivity failed: ${error.message}`, 'error');
+            }
+            
+            // Test 2: OPTIONS request
+            try {
+                log('📤 Sending OPTIONS request...');
+                const response = await fetch(FUNCTION_URL, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                log(`📡 OPTIONS Response: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                log(`Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+                
+                if (response.ok) {
+                    log('✅ OPTIONS request successful', 'success');
+                } else {
+                    log('❌ OPTIONS request failed', 'error');
+                }
+            } catch (error) {
+                log(`❌ OPTIONS request error: ${error.message}`, 'error');
+            }
+            
+            // Test 3: POST request
+            try {
+                log('📤 Sending POST request...');
+                const payload = {
+                    request: "test connection",
+                    currentTheme: {},
+                    timestamp: new Date().toISOString()
+                };
+                
+                log(`Payload: ${JSON.stringify(payload)}`);
+                
+                const response = await fetch(FUNCTION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                log(`📡 POST Response: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                log(`Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ POST request successful: ${JSON.stringify(data)}`, 'success');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ POST request failed: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ POST request error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testThemeRequest() {
+            log('🎨 Testing theme request...');
+            
+            try {
+                const payload = {
+                    request: "Make it look cyberpunk",
+                    currentTheme: {},
+                    timestamp: new Date().toISOString()
+                };
+                
+                log(`Sending theme request: ${JSON.stringify(payload)}`);
+                
+                const response = await fetch(FUNCTION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Theme request successful: ${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    const errorText = await response.text();
+                    log(`❌ Theme request failed: ${errorText}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Theme request error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-run test on page load
+        window.onload = function() {
+            log('Page loaded, ready to test backend connectivity');
+        };
+    </script>
+</body>
+</html>

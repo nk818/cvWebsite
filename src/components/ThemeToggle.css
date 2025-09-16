@@ -1,0 +1,262 @@
+/* Theme Toggle Button Styles */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px var(--shadow);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  white-space: nowrap;
+  width: auto;
+  min-width: auto;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--shadow);
+  border-color: var(--primary-color);
+}
+
+.theme-toggle.active {
+  background: var(--gradient);
+  color: white;
+  border-color: transparent;
+}
+
+.theme-toggle.dark {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.theme-toggle.dark.active {
+  background: var(--gradient);
+  color: white;
+}
+
+.theme-toggle-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.palette-icon {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  opacity: 0.8;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.color-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  animation: colorPulse 2s infinite;
+}
+
+.color-1 {
+  background: #ff6b6b;
+  animation-delay: 0s;
+}
+
+.color-2 {
+  background: #4ecdc4;
+  animation-delay: 0.5s;
+}
+
+.color-3 {
+  background: #45b7d1;
+  animation-delay: 1s;
+}
+
+.color-4 {
+  background: #96ceb4;
+  animation-delay: 1.5s;
+}
+
+@keyframes colorPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.brush-icon {
+  position: absolute;
+  font-size: 12px;
+  animation: brushSway 3s ease-in-out infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes brushSway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+.theme-toggle-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Active state animations */
+.theme-toggle.active .palette-icon {
+  animation: colorSpin 1s ease-in-out;
+}
+
+.theme-toggle.active .brush-icon {
+  animation: brushPaint 1s ease-in-out;
+}
+
+@keyframes colorSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes brushPaint {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .theme-toggle {
+    bottom: 15px;
+    right: 15px;
+    padding: 5px 10px;
+    font-size: 0.65rem;
+  }
+  
+  .theme-toggle-text {
+    font-size: 0.6rem;
+  }
+  
+  .theme-toggle-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .palette-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .color-dot {
+    width: 3px;
+    height: 3px;
+  }
+  
+  .brush-icon {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 16px;
+  }
+  
+  .theme-toggle-text {
+    display: none;
+  }
+  
+  .theme-toggle-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .palette-icon {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .color-dot {
+    width: 2px;
+    height: 2px;
+  }
+  
+  .brush-icon {
+    font-size: 8px;
+  }
+}
+
+/* Focus styles for accessibility */
+.theme-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.theme-toggle:focus:not(:focus-visible) {
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+/* Loading state */
+.theme-toggle.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.theme-toggle.loading .palette-icon {
+  animation: colorSpin 1s linear infinite;
+}
+
+.theme-toggle.loading .brush-icon {
+  animation: brushPaint 1s linear infinite;
+}
